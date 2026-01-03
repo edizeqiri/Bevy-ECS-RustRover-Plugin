@@ -1,4 +1,4 @@
-# Bevy ECS Plugin
+# Bevy ECS RustRover Plugin
 
 A RustRover Plugin to show Enities, Components and Systems in the IDE.
 
