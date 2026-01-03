@@ -10,6 +10,11 @@ import org.rust.lang.RsFileType
 import org.rust.lang.core.psi.ext.name
 import java.io.File
 
+data class MessageField(
+    val name: String,
+    val type: String
+)
+
 data class BevyItem(
     val name: String,
     val fields: List<MessageField>,
@@ -124,6 +129,7 @@ class BevyScanner(private val project: Project) {
                 parts.size > 1 -> {
                     parts.dropLast(1).joinToString("/")
                 }
+
                 else -> "Unknown"
             }
         }
