@@ -5,16 +5,27 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Bevy-ecs</name>
+    <name>Bevy ECS</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor url="https://www.yourcompany.com">YourCompany</vendor>
+    <vendor url="https://github.com/edizeqiri">edizeqiri</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    <p>A powerful tool window for exploring and navigating Bevy ECS code in Rust projects.</p>
+    
+    <p><b>Features:</b></p>
+    <ul>
+      <li><b>Automatic Scanning:</b> Scans your Rust project for Bevy ECS entities</li>
+      <li><b>Organized View:</b> Displays Messages, Components, and Systems grouped by module/file structure</li>
+      <li><b>Field Inspection:</b> View fields and types for Messages and Components</li>
+      <li><b>Quick Navigation:</b> Double-click any item to navigate to its definition</li>
+      <li><b>Auto-refresh:</b> Automatically updates when Rust files are modified</li>
+      <li><b>Expand/Collapse:</b> Control tree expansion with dedicated buttons</li>
+    </ul>
+    
+    <p>Perfect for developers working with Bevy game engine to quickly explore and navigate their ECS architecture.</p>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
