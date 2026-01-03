@@ -55,4 +55,15 @@ tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "21"
     }
+    processResources {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        // or DuplicatesStrategy.INCLUDE to keep the last one
+    }
+}
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/resources")
+        }
+    }
 }

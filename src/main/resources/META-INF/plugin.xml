@@ -25,10 +25,10 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Bevy Messages"
+        <toolWindow id="Bevy ECS"
                     factoryClass="ch.edizeqiri.bevyecs.BevyToolWindowFactory"
                     anchor="right"
-                    icon="AllIcons.Nodes.Class"/>
+                    icon="META-INF/icons/img.png"/>
     </extensions>
 
 </idea-plugin>

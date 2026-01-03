@@ -7,36 +7,36 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.util.descendantsOfType
 import org.rust.lang.core.psi.*
 import org.rust.lang.RsFileType
+import org.rust.lang.core.psi.ext.RsElement
 import org.rust.lang.core.psi.ext.name
 import java.io.File
-
-data class MessageField(
-    val name: String,
-    val type: String
-)
 
 data class BevyItem(
     val name: String,
     val fields: List<MessageField>,
     val type: BevyItemType,
-    val filePath: String? = null
-)
+    val filePath: String? = null,
+    val lineNumber: Int? = null,
+    val textOffset: Int? = null
+) {
+    override fun toString(): String = name
+}
 
 enum class BevyItemType {
     MESSAGE, COMPONENT, SYSTEM
 }
 
-data class SystemGroup(
+data class BevyGroup(
     val groupName: String,
-    val systems: List<BevyItem>
+    val items: List<BevyItem>
 )
 
 class BevyScanner(private val project: Project) {
 
     data class ScanResult(
-        val messages: List<BevyItem>,
-        val components: List<BevyItem>,
-        val systemGroups: List<SystemGroup>
+        val messageGroups: List<BevyGroup>,
+        val componentGroups: List<BevyGroup>,
+        val systemGroups: List<BevyGroup>
     )
 
     fun findBevyItems(): ScanResult {
@@ -74,7 +74,9 @@ class BevyScanner(private val project: Project) {
                         name = struct.name ?: "<unnamed>",
                         fields = fields,
                         type = itemType,
-                        filePath = filePath
+                        filePath = filePath,
+                        lineNumber = getLineNumber(struct),
+                        textOffset = struct.textOffset
                     )
 
                     when (itemType) {
@@ -93,24 +95,32 @@ class BevyScanner(private val project: Project) {
                             name = function.name ?: "<unnamed>",
                             fields = emptyList(),
                             type = BevyItemType.SYSTEM,
-                            filePath = filePath
+                            filePath = filePath,
+                            lineNumber = getLineNumber(function),
+                            textOffset = function.textOffset
                         )
                     )
                 }
             }
         }
 
-        // Group systems by folder/file
-        val systemGroups = groupSystems(systems)
-
-        return ScanResult(messages, components, systemGroups)
+        return ScanResult(
+            messageGroups = groupItems(messages),
+            componentGroups = groupItems(components),
+            systemGroups = groupItems(systems)
+        )
     }
 
-    private fun groupSystems(systems: List<BevyItem>): List<SystemGroup> {
+    private fun getLineNumber(element: RsElement): Int? {
+        val document = element.containingFile.viewProvider.document ?: return null
+        return document.getLineNumber(element.textOffset)
+    }
+
+    private fun groupItems(items: List<BevyItem>): List<BevyGroup> {
         val projectBasePath = project.basePath ?: return emptyList()
 
-        val grouped = systems.groupBy { system ->
-            val filePath = system.filePath ?: return@groupBy "Unknown"
+        val grouped = items.groupBy { item ->
+            val filePath = item.filePath ?: return@groupBy "Unknown"
             val relativePath = File(filePath).relativeTo(File(projectBasePath)).path
 
             // Extract folder path
@@ -129,13 +139,12 @@ class BevyScanner(private val project: Project) {
                 parts.size > 1 -> {
                     parts.dropLast(1).joinToString("/")
                 }
-
                 else -> "Unknown"
             }
         }
 
-        return grouped.map { (groupName, systemList) ->
-            SystemGroup(groupName, systemList.sortedBy { it.name })
+        return grouped.map { (groupName, itemList) ->
+            BevyGroup(groupName, itemList.sortedBy { it.name })
         }.sortedBy { it.groupName }
     }
 
